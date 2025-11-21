@@ -3,7 +3,12 @@ package main
 import (
 	"log/slog"
 	"os"
+
 	"pr-reviewer-service/internal/config"
+	"pr-reviewer-service/internal/storage"
+
+	//delete this line if no more imports are needed
+	"github.com/joho/godotenv"
 )
 
 const (
@@ -12,14 +17,20 @@ const (
 )
 
 func main() {
-	сfg := config.MustLoadConfig()
+	//delete this line if no more code is needed
+	if err := godotenv.Load(".env"); err != nil {
+		slog.Warn("No .env file found, relying on environment variables")
+	}
 
-	log := setupLogger(сfg.Env)
+	cfg := config.MustLoadConfig()
 
-	log.Info("starting pr-reviewer service", slog.String("env", сfg.Env))
-	log.Debug("debug mode is enabled")
+	log := setupLogger(cfg.Env)
 
-	// TODO: init storage: PostgreSQL
+	storage, err := storage.NewPool(cfg.StoragePath)
+	if err != nil {
+		log.Error("StoragePath is incorrect", cfg.StoragePath)
+	}
+	_ = storage
 
 	// TODO: init router: chi
 
