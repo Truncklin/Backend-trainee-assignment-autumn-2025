@@ -2,6 +2,9 @@ package storage
 
 import (
 	"context"
+	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -30,4 +33,30 @@ func NewPool(storagePath string) (*pgxpool.Pool, error) {
 	}
 
 	return pool, nil
+}
+
+func RunMigrations(pool *pgxpool.Pool) error {
+	ctx := context.Background()
+
+	migrationsPath := "internal/storage/migrations/init.sql"
+
+	data, err := os.ReadFile(filepath.Clean(migrationsPath))
+	if err != nil {
+		return err
+	}
+
+	queries := strings.Split(string(data), ";")
+
+	for _, q := range queries {
+		q = strings.TrimSpace(q)
+		if q == "" {
+			continue
+		}
+		_, err := pool.Exec(ctx, q)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

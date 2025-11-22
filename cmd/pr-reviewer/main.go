@@ -5,10 +5,8 @@ import (
 	"os"
 
 	"pr-reviewer-service/internal/config"
+	"pr-reviewer-service/internal/lib/logger"
 	"pr-reviewer-service/internal/storage"
-
-	//delete this line if no more imports are needed
-	"github.com/joho/godotenv"
 )
 
 const (
@@ -17,20 +15,21 @@ const (
 )
 
 func main() {
-	//delete this line if no more code is needed
-	if err := godotenv.Load(".env"); err != nil {
-		slog.Warn("No .env file found, relying on environment variables")
-	}
-
 	cfg := config.MustLoadConfig()
 
 	log := setupLogger(cfg.Env)
 
-	storage, err := storage.NewPool(cfg.StoragePath)
+	pool, err := storage.NewPool(cfg.StoragePath)
 	if err != nil {
-		log.Error("StoragePath is incorrect", cfg.StoragePath)
+		log.Error("StoragePath is incorrect", slog.String("storage_path", cfg.StoragePath), logger.Err(err)) // slog.Attr{Key: "err",Value: slog.StringValue(err.Error()) == logger.Err(err)
+		os.Exit(1)
 	}
-	_ = storage
+
+	err = storage.RunMigrations(pool)
+	if err != nil {
+		log.Error("Failed to run migrations", logger.Err(err))
+		os.Exit(1)
+	}
 
 	// TODO: init router: chi
 
