@@ -2,11 +2,14 @@ package main
 
 import (
 	"log/slog"
+	"net/http"
 	"os"
 
 	"pr-reviewer-service/internal/config"
+	apihandler "pr-reviewer-service/internal/http/handlers"
 	"pr-reviewer-service/internal/lib/logger"
 	"pr-reviewer-service/internal/storage"
+	"pr-reviewer-service/internal/storage/repo"
 )
 
 const (
@@ -31,7 +34,19 @@ func main() {
 		os.Exit(1)
 	}
 
-	// TODO: init router: chi
+	store := repo.New(pool)
+	r := apihandler.NewRouter(store)
+	server := &http.Server{
+		Addr:         cfg.HTTPServer.Address,
+		Handler:      r,
+		ReadTimeout:  cfg.HTTPServer.Timeout,
+		WriteTimeout: cfg.HTTPServer.Timeout,
+		IdleTimeout:  cfg.HTTPServer.IdleTimeout,
+	}
+	log.Info("starting server", slog.String("addr", cfg.HTTPServer.Address))
+	if err := server.ListenAndServe(); err != nil {
+		log.Error("server error", logger.Err(err))
+	}
 
 	// TODO: run server
 }

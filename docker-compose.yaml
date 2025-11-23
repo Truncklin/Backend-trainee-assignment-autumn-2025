@@ -6,6 +6,7 @@ services:
     container_name: pr-service
     environment:
       CONFIG_PATH: "/app/config/local.yaml"
+      STORAGE_PATH: "postgres://prsvc:prsvcpass123@db:5432/prdb?sslmode=disable"
     volumes:
       - ./config/local.yaml:/app/config/local.yaml:ro
     ports:
