@@ -47,8 +47,6 @@ func main() {
 	if err := server.ListenAndServe(); err != nil {
 		log.Error("server error", logger.Err(err))
 	}
-
-	// TODO: run server
 }
 
 func setupLogger(env string) *slog.Logger {

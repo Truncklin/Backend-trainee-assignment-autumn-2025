@@ -38,7 +38,7 @@ func NewPool(storagePath string) (*pgxpool.Pool, error) {
 func RunMigrations(pool *pgxpool.Pool) error {
 	ctx := context.Background()
 
-	migrationsPath := "internal/storage/migrations/init.sql"
+	migrationsPath := "/migrations/init.sql"
 
 	data, err := os.ReadFile(filepath.Clean(migrationsPath))
 	if err != nil {

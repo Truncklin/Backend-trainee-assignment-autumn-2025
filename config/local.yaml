@@ -1,15 +1,7 @@
 env: "local"
-storage_path: "postgres://prsvc:prsvcpass123@db:5432/prdb?sslmode=disable"
+storage_path: "postgres://prsvc:prsvcpass123@db:5432/db?sslmode=disable"
 http_server:
-  address: "localhost:8080"
+  address: "0.0.0.0:8080"
   timeout: 4s
   idle_timeout: 60s 
-
-
-  #image: postgres:15
-   # environment:
-    #  POSTGRES_USER: prsvc
-     # POSTGRES_PASSWORD: prsvcpass123
-      #POSTGRES_DB: prdb
-    #ports:
-     # - "5432:5432"*/
+  
