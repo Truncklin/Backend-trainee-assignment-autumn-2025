@@ -16,7 +16,7 @@ services:
 
   db:
     image: postgres:15
-    container_name: pr-db
+    container_name: db
     environment:
       POSTGRES_USER: prsvc
       POSTGRES_PASSWORD: prsvcpass123
