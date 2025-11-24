@@ -9,6 +9,7 @@ services:
       STORAGE_PATH: "postgres://prsvc:prsvcpass123@db:5432/prdb?sslmode=disable"
     volumes:
       - ./config/local.yaml:/app/config/local.yaml:ro
+      - ./internal/storage/migrations:/app/internal/storage/migrations:ro
     ports:
       - "8080:8080"
     depends_on:
